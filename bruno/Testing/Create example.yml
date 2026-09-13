@@ -1,17 +1,16 @@
 info:
-  name: Create User
+  name: Create example
   type: http
-  seq: 1
+  seq: 2
 
 http:
   method: POST
-  url: "{{baseUrl}}/api/users"
+  url: "{{baseUrl}}/api/examples"
   body:
     type: json
     data: |-
       {
-        "name": "Test User",
-        "email": "test@example.com"
+        "name": "kunal"
       }
   auth: inherit
 
@@ -20,3 +19,4 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: false
