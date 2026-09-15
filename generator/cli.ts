@@ -1,7 +1,9 @@
+#!/usr/bin/env node
+
 import { input, confirm } from "@inquirer/prompts";
-import { generateProject } from "./generator";
-import { isValidProjectName } from "./validate-project-name";
-import { destinationExists } from "./check-destination";
+import { generateProject } from "./generator.js";
+import { isValidProjectName } from "./validate-project-name.js";
+import { destinationExists } from "./check-destination.js";
 
 async function main() {
   let projectName = process.argv[2];

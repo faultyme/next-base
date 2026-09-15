@@ -1,0 +1,20 @@
+{
+  "name": "@faultyme/next-base",
+  "version": "0.1.0",
+  "description": "A minimal Next.js and TypeScript project generator with an optional database bundle.",
+  "type": "module",
+  "bin": {
+    "next-base": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "README.md"
+  ],
+  "dependencies": {
+    "@inquirer/prompts": "^8.7.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

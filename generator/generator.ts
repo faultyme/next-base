@@ -1,23 +1,23 @@
 import { mkdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { copyTemplate } from "./copy-template";
+import { copyTemplate } from "./copy-template.js";
 import {
   mergePackageJson,
   readJsonFile,
   writeJsonFile,
   type PackageJson,
   type PackageJsonAdditions,
-} from "./package-json";
-
-import { updateProjectReadme } from "./project-readme";
-import { appendDatabaseReadme } from "./database-readme";
+} from "./package-json.js";
+import { updateProjectReadme } from "./project-readme.js";
+import { appendDatabaseReadme } from "./database-readme.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export function generateProject(projectName: string, includeDatabase: boolean) {
-  const coreTemplatePath = path.join(__dirname, "templates", "core");
+  const templatesPath = path.join(__dirname, "..", "templates");
+  const coreTemplatePath = path.join(templatesPath, "core");
 
   mkdirSync(projectName);
 
@@ -38,18 +38,12 @@ export function generateProject(projectName: string, includeDatabase: boolean) {
 
   updateProjectReadme(readmePath, projectName);
   if (includeDatabase) {
-    const databaseTemplatePath = path.join(__dirname, "templates", "database");
-
+    const databaseTemplatePath = path.join(templatesPath, "database");
     copyTemplate(databaseTemplatePath, projectName, {
       filter: sourcePath => !sourcePath.endsWith("package.additions.json"),
     });
 
-    const databaseAdditionsPath = path.join(
-      __dirname,
-      "templates",
-      "database",
-      "package.additions.json"
-    );
+    const databaseAdditionsPath = path.join(templatesPath, "database", "package.additions.json");
 
     const databaseAdditions = readJsonFile<PackageJsonAdditions>(databaseAdditionsPath);
 
@@ -57,8 +51,7 @@ export function generateProject(projectName: string, includeDatabase: boolean) {
 
     writeJsonFile(corePackagePath, mergedPackage);
 
-    const databaseReadmePath = path.join(__dirname, "templates", "database", "README.database.md");
-
+    const databaseReadmePath = path.join(templatesPath, "database", "README.database.md");
     appendDatabaseReadme(readmePath, databaseReadmePath);
   }
 
