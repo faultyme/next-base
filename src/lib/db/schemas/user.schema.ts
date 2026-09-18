@@ -1,10 +1,14 @@
-import { pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { integer, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 // Users
+export const userRoleEnum = pgEnum("user_role", ["SUPER_ADMIN", "ADMIN", "USER"]);
+
 export const userStatusEnum = pgEnum("user_status", ["ACTIVE", "DISABLED"]);
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
+
+  role: userRoleEnum("role").notNull().default("USER"),
 
   email: text("email").unique(),
   mobile: text("mobile").unique(),
@@ -29,52 +33,6 @@ export const users = pgTable("users", {
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 
-//Roles
-export const roles = pgTable("roles", {
-  id: uuid("id").primaryKey().defaultRandom(),
-
-  name: text("name").notNull().unique(),
-
-  description: text("description"),
-
-  createdAt: timestamp("created_at", {
-    withTimezone: true,
-  })
-    .defaultNow()
-    .notNull(),
-
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .$onUpdate(() => new Date())
-    .notNull(),
-});
-
-export type Role = typeof roles.$inferSelect;
-export type NewRole = typeof roles.$inferInsert;
-
-//User Roles
-export const userRoles = pgTable(
-  "user_roles",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-
-    userId: uuid("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-
-    roleId: uuid("role_id")
-      .notNull()
-      .references(() => roles.id, { onDelete: "cascade" }),
-
-    createdAt: timestamp("created_at", {
-      withTimezone: true,
-    })
-      .defaultNow()
-      .notNull(),
-  },
-  table => [uniqueIndex("user_roles_user_id_role_id_idx").on(table.userId, table.roleId)]
-);
-
 //Verification Token
 export const verificationIdentifierTypeEnum = pgEnum("verification_identifier_type", [
   "EMAIL",
@@ -94,11 +52,19 @@ export const verificationTokens = pgTable(
 
     identifierType: verificationIdentifierTypeEnum("identifier_type").notNull(),
 
-    token: text("token").notNull().unique(),
+    tokenHash: text("token_hash").notNull().unique(),
 
     expiresAt: timestamp("expires_at", {
       withTimezone: true,
     }).notNull(),
+
+    resendCount: integer("resend_count").notNull().default(0),
+
+    verificationAttempts: integer("verification_attempts").notNull().default(0),
+
+    lockedUntil: timestamp("locked_until", {
+      withTimezone: true,
+    }),
 
     createdAt: timestamp("created_at", {
       withTimezone: true,
@@ -107,12 +73,11 @@ export const verificationTokens = pgTable(
       .notNull(),
   },
   table => [
-    uniqueIndex("verification_tokens_user_id_type_idx").on(table.userId, table.identifierType),
+    uniqueIndex("verification_tokens_user_id_type_unique").on(table.userId, table.identifierType),
   ]
 );
 
 export type VerificationToken = typeof verificationTokens.$inferSelect;
-
 export type NewVerificationToken = typeof verificationTokens.$inferInsert;
 
 //Refresh Token

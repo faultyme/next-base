@@ -22,6 +22,27 @@
       "when": 1789741740317,
       "tag": "0002_married_emma_frost",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789747214434,
+      "tag": "0003_awesome_starjammers",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1789748286356,
+      "tag": "0004_calm_punisher",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1789748629633,
+      "tag": "0005_amazing_weapon_omega",
+      "breakpoints": true
     }
   ]
 }
