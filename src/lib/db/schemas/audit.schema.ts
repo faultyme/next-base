@@ -1,7 +1,20 @@
 import { pgEnum, pgTable, text, timestamp, uuid, jsonb } from "drizzle-orm/pg-core";
 import { users } from "./user.schema";
 
-export const auditActionEnum = pgEnum("audit_action", ["USER_CREATED"]);
+export const auditActionEnum = pgEnum("audit_action", [
+  "USER_CREATED",
+
+  "OTP_SENT",
+  "OTP_RESEND",
+  "OTP_VERIFY_FAILED",
+  "OTP_VERIFY_SUCCESS",
+  "OTP_VERIFY_EXPIRED",
+  "OTP_VERIFY_COOLDOWN",
+
+  "LOGIN_SUCCESS",
+  "LOGIN_FAILED",
+  "LOGOUT",
+]);
 
 export const auditEntityTypeEnum = pgEnum("audit_entity_type", ["USER"]);
 

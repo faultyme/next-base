@@ -62,7 +62,11 @@ export const verificationTokens = pgTable(
 
     verificationAttempts: integer("verification_attempts").notNull().default(0),
 
-    lockedUntil: timestamp("locked_until", {
+    resendLockedUntil: timestamp("resend_locked_until", {
+      withTimezone: true,
+    }),
+
+    verificationLockedUntil: timestamp("verification_locked_until", {
       withTimezone: true,
     }),
 
@@ -79,32 +83,3 @@ export const verificationTokens = pgTable(
 
 export type VerificationToken = typeof verificationTokens.$inferSelect;
 export type NewVerificationToken = typeof verificationTokens.$inferInsert;
-
-//Refresh Token
-export const refreshTokens = pgTable("refresh_tokens", {
-  id: uuid("id").primaryKey().defaultRandom(),
-
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => users.id, {
-      onDelete: "cascade",
-    }),
-  tokenHash: text("token_hash").notNull().unique(),
-
-  expiresAt: timestamp("expires_at", {
-    withTimezone: true,
-  }).notNull(),
-
-  createdAt: timestamp("created_at", {
-    withTimezone: true,
-  })
-    .defaultNow()
-    .notNull(),
-
-  revokedAt: timestamp("revoked_at", {
-    withTimezone: true,
-  }),
-});
-
-export type RefreshToken = typeof refreshTokens.$inferSelect;
-export type NewRefreshToken = typeof refreshTokens.$inferInsert;
