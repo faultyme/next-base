@@ -2,7 +2,7 @@
 
 The Core / Foundation is the base layer of the project.
 
-It is always included when creating a project with the generator. It provides the basic Next.js application structure, TypeScript setup, styling, code quality, developer workflow, environment configuration, and reusable project folders.
+It provides the basic Next.js application structure, TypeScript setup, styling, code quality, developer workflow, environment configuration, and reusable project folders.
 
 ## What's Included
 
@@ -66,13 +66,13 @@ Empty foundation folders are kept in Git with `.gitkeep` files.
 
 The Core / Foundation does not contain application-specific capabilities.
 
-Optional capabilities are added on top of the foundation.
+Optional capabilities can be added on top of the foundation.
 
 Currently available:
 
 - **Database** — PostgreSQL + Neon + Drizzle ORM + validation + API + Bruno + Example domain
 
-The Database capability is selected as one bundle. Its individual parts are not separate generator options.
+The Database capability is treated as one bundle. Its individual parts are not separate options.
 
 ## API Convention
 
@@ -80,6 +80,7 @@ API routes follow an entity-first structure:
 
 ```text
 /api/{entity}
+
 /api/{entity}/{id}
 ```
 
@@ -87,6 +88,7 @@ For example:
 
 ```text
 /api/examples
+
 /api/examples/{id}
 ```
 
@@ -96,4 +98,4 @@ Authorization should determine who can access a resource rather than creating se
 
 The foundation should stay small and reusable.
 
-Capability-specific code should not be placed in the Core / Foundation unless it is required by every generated project.
+Capability-specific code should not be placed in the Core / Foundation unless it is required by every project.
