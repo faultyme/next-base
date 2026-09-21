@@ -6,6 +6,7 @@ import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { auditLogs } from "@/lib/db/schemas/audit.schema";
 import { verificationTokens, users } from "@/lib/db/schemas/user.schema";
+import { sendMail } from "../messaging/mail/send-mail";
 
 type IdentifierType = "EMAIL" | "MOBILE";
 
@@ -84,12 +85,9 @@ export async function sendVerificationOtp({
 
   const otp = generateOtp();
   const otpHash = hashOtp(otp);
-  const expiresAt = new Date(now.getTime() + 5 * 60 * 1000);
-  console.log("5️⃣ otp data", otp, otpHash, expiresAt);
+  const expiresAt = new Date(now.getTime() + 10 * 60 * 1000);
 
   if (!existingToken) {
-    console.log("3️⃣ transaction started");
-
     await db.transaction(async tx => {
       await tx.insert(verificationTokens).values({
         userId,
@@ -101,7 +99,6 @@ export async function sendVerificationOtp({
         resendLockedUntil: null,
         verificationLockedUntil: null,
       });
-      console.log("4️⃣ verification token inserted");
 
       await tx.insert(auditLogs).values({
         actorUserId: userId,
@@ -111,7 +108,12 @@ export async function sendVerificationOtp({
         previousValue: null,
         currentValue: { identifierType, expiresAt },
       });
-      console.log("5️⃣ audit inserted");
+    });
+
+    await sendMail({
+      to: identifier,
+      template: "OTP",
+      vars: { otp, minutes: Math.round((expiresAt.getTime() - now.getTime()) / 60_000) },
     });
 
     if (process.env.NODE_ENV === "development") console.log(`[OTP] ${identifier}: ${otp}`);
@@ -143,6 +145,12 @@ export async function sendVerificationOtp({
         expiresAt,
       },
     });
+  });
+
+  await sendMail({
+    to: identifier,
+    template: "OTP",
+    vars: { otp, minutes: Math.round((expiresAt.getTime() - now.getTime()) / 60_000) },
   });
 
   if (process.env.NODE_ENV === "development") console.log(`[OTP] ${identifier}: ${otp}`);

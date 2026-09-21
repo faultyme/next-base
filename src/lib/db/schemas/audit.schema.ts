@@ -1,4 +1,4 @@
-import { pgEnum, pgTable, text, timestamp, uuid, jsonb } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, timestamp, uuid, jsonb } from "drizzle-orm/pg-core";
 import { users } from "./user.schema";
 
 export const auditActionEnum = pgEnum("audit_action", [
